@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="reviews.tab">
+            <block class="Troya\Comments\Block\Comments" name="troya.comments" as="troya_comments"
+                   template="Troya_Comments::improve.phtml" after="-">
+            </block>
+        </referenceBlock>
+        <referenceContainer name="product.info.details">
+            <referenceBlock name="product.info.product_additional_data" template="Troya_Comments::product/view/list.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

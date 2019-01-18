@@ -1,0 +1,26 @@
+{
+  "name": "troya/comments",
+  "description": "Magento 2 Review Improve Troya Comments Module",
+  "require": {
+    "php": "^~7.0.0",
+    "troya/comments": "*",
+    "league/csv": "^8.0"
+  },
+  "type": "magento2-module",
+  "license": "GPL-3.0",
+  "authors": [
+    {
+      "name": "Oleksandr Nesterenko",
+      "email": "o.nesterenko@troyastudio.com"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Troya\\Comments\\": ""
+    }
+  }
+}
+
