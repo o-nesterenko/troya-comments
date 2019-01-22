@@ -1,12 +1,12 @@
 <?php
 // @codingStandardsIgnoreFile
-/** @var Magento\Review\Block\Product\View\ListView $block */
+/** @var Troya\Comments\Block\Product\View\ListView $block */
 
 $allItems = $block->getReviewItemsFiltered();
 $_items = $allItems['questions'];
 $_answerItems = $allItems['answers'];
 $format = $block->getDateFormat() ?: \IntlDateFormatter::SHORT;
-$relations = $this->getRelationsTree();
+$relations = $block->getRelationsTree();
 
 ?>
 <?php if (count($_items)): ?>
@@ -19,7 +19,8 @@ $relations = $this->getRelationsTree();
                 <?= $block->getChildHtml('toolbar') ?>
             </div>
             <ol class="items review-items">
-                <?php foreach ($_items as $_review): ?>
+                <?php foreach ($_items as $_reviewId): ?>
+                    <?php $_review = $block->getReviewData($_reviewId); ?>
                     <li class="item review-item" itemscope itemprop="review" itemtype="http://schema.org/Review"
                         item-rew-id="<?= $_review->getId() ?>">
                         <div class="review-title" itemprop="name"><?= $block->escapeHtml($_review->getTitle()) ?></div>
@@ -57,12 +58,14 @@ $relations = $this->getRelationsTree();
                             </p>
                         </div>
 
-                        <?php if(isset($relations[$_review->getId()])): ?>
-                            <?php foreach($relations[$_review->getId()] as $responseId): ?>
-                                <?php $answer = $_answerItems[$responseId]; ?>
-                                <div class="review-content troya-comments" itemprop="description">
-                                    <?= nl2br($block->escapeHtml($answer->getDetail())) ?>
-                                </div>
+                        <?php if (isset($relations[$_review->getId()])): ?>
+                            <?php foreach ($relations[$_review->getId()] as $responseId): ?>
+                                <?php if (isset($_answerItems[$responseId])): ?>
+                                    <?php $answer = $_answerItems[$responseId]; ?>
+                                    <div class="review-content troya-comments" itemprop="description">
+                                        <?= nl2br($block->escapeHtml($answer->getDetail())) ?>
+                                    </div>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         <?php endif; ?>
 
@@ -77,9 +80,6 @@ $relations = $this->getRelationsTree();
             <div class="toolbar review-toolbar">
                 <?= $block->getChildHtml('toolbar') ?>
             </div>
-
-
-
 
 
         </div>

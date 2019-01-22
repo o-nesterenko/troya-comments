@@ -3,7 +3,7 @@
 namespace Troya\Comments\Block\Product\View;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use \Troya\Comments\Model\CommentsFactory;
+use Troya\Comments\Model\CommentsFactory;
 
 class ListView extends \Magento\Review\Block\Product\View\ListView
 {
@@ -18,6 +18,8 @@ class ListView extends \Magento\Review\Block\Product\View\ListView
 
     public $filteredReviews;
 
+    public $reviewFactory;
+
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
         \Magento\Framework\Url\EncoderInterface $urlEncoder,
@@ -31,7 +33,8 @@ class ListView extends \Magento\Review\Block\Product\View\ListView
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         \Magento\Review\Model\ResourceModel\Review\CollectionFactory $collectionFactory,
         array $data = [],
-        CommentsFactory $commentsRelations
+        CommentsFactory $commentsRelations,
+        \Magento\Review\Model\ReviewFactory $reviewFactory
     )
     {
         parent::__construct(
@@ -49,13 +52,16 @@ class ListView extends \Magento\Review\Block\Product\View\ListView
             $data
         );
 
+        $this->reviewFactory = $reviewFactory;
+
         $this->commentsRelations = $commentsRelations;
 
-        $allIds = $this->getReviewsCollection()->getColumnValues('id');
+        $allIds = $this->getReviewsCollection()->getColumnValues('review_id');
         $this->relationCommentsCollection = $this->commentsRelations
             ->create()
-            ->getCollection()
+            ->getResourceCollection()
             ->addFieldToFilter('parent_id', array('in' => $allIds));
+
     }
 
 
@@ -88,11 +94,13 @@ class ListView extends \Magento\Review\Block\Product\View\ListView
             $this->filteredReviews['answers'] = [];
 
             $childIds = $this->relationCommentsCollection->getColumnValues('child_id');
+
+
             foreach ($this->getReviewsCollection()->getItems() as $review) {
                 if (in_array($review->getId(), $childIds)) {
-                    $this->filteredReviews['answers'][$review->getId()] = $review;
+                    $this->filteredReviews['answers'][] = $review->getId();
                 } else {
-                    $this->filteredReviews['questions'] = $review;
+                    $this->filteredReviews['questions'][] = $review->getId();
                 }
             }
         }
@@ -100,5 +108,12 @@ class ListView extends \Magento\Review\Block\Product\View\ListView
         return $this->filteredReviews;
     }
 
+    public function getReviewData($reviewId)
+    {
+
+        $reviewData = $this->reviewFactory->create()->load($reviewId);
+        return $reviewData;
+
+    }
 
 }
