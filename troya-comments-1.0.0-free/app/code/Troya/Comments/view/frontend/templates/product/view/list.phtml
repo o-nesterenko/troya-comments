@@ -59,16 +59,19 @@ $relations = $block->getRelationsTree();
                         </div>
 
                         <?php if (isset($relations[$_review->getId()])): ?>
-                            <?php foreach ($relations[$_review->getId()] as $responseId): ?>
-                                <?php if (isset($_answerItems[$responseId])): ?>
-                                    <?php $answer = $_answerItems[$responseId]; ?>
-                                    <div class="review-content troya-comments" itemprop="description">
-                                        <?= nl2br($block->escapeHtml($answer->getDetail())) ?>
+                            <?php foreach ($relations[$_review->getId()] as $keyRes => $responseId): ?>
+                                <?php if (in_array($responseId, $_answerItems)): ?>
+                                    <?php $answer = $block->getReviewData($responseId); ?>
+                                    <div class="troya-comments-reply item">
+                                        <label for="answer-<?= $answer->getId() ?>"><?= __('Reply From') ?> <?= $block->escapeHtml($answer->getNickname()) ?></label>
+                                        <div class="review-content troya-comments" itemprop="description"
+                                             id="answer-<?= $answer->getId() ?>">
+                                            <?= nl2br($block->escapeHtml($answer->getDetail())) ?>
+                                        </div>
                                     </div>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         <?php endif; ?>
-
 
                         <div class="troya-comments buttons-set">
                             <button class="troya-reply" id="<?= $_review->getId() ?>"><?= __('Reply') ?></button>
